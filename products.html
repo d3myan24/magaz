@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopVerse - Товары</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+    }
+
+    .cart-icon {
+      position: relative;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background-color: red;
+      color: white;
+      font-size: 12px;
+      border-radius: 50%;
+      padding: 2px 6px;
+      display: none;
+    }
+
+    .cart-count.visible {
+      display: inline-block;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .filter {
+      margin-bottom: 20px;
+    }
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .product {
+      background-color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+      width: 220px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .product img {
+      width: 100%;
+      height: auto;
+    }
+
+    .product h3 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .product p {
+      margin: 5px 0;
+    }
+
+    .product button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+
+    .product button:hover {
+      background-color: #2980b9;
+    }
+
+    footer {
+      background-color: #ecf0f1;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center;">
+      <div class="cart-icon" id="cart">🛒
+        <span id="cart-count" class="cart-count">0</span>
+      </div>
+      <div class="logo" style="margin-left: 15px;">ShopVerse</div>
+    </div>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="products.html">Товары</a>
+      <a href="about.html">О нас</a>
+      <a href="contact.html">Контакты</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Наши товары</h2>
+
+    <div class="filter">
+      <label for="sort">Сортировать по цене:</label>
+      <select id="sort">
+        <option value="default">По умолчанию</option>
+        <option value="asc">Сначала дешевые</option>
+        <option value="desc">Сначала дорогие</option>
+      </select>
+    </div>
+
+    <div class="products" id="products-container">
+      <!-- JS вставит товары сюда -->
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 ShopVerse. Все права защищены.</p>
+  </footer>
+
+  <script>
+    const products = [
+      {
+        name: 'Футболка Versace',
+        price: 11500,
+        img: 'https://images.prom.ua/4770230421_futbolka-cholovicha-versace.jpg'
+      },
+      {
+        name: 'Футболка Versace Jeans Couture',
+        price: 9070,
+        img: 'https://img.modivo.cloud/product(8/d/e/b/8deb33e25c2c42cb97656486fc0fb6cbf3ad9fdc_01_8052029016625_KM.jpg,webp)/versace-jeans-couture-futbolka-79gah6s0-js515-chornii-regular-fit-0000305601636.webp'
+      },
+      {
+        name: 'Шрты Gucci',
+        price: 14500,
+        img: 'https://media2.symbol.ua/aio-images/3f/82/3f8235dcaeb0e6a8395afde61e77b797/2eebc5b9-6a02-4999-b7b6-1b15f4882fee.jpg'
+      },
+        {
+            name: 'Пляжные шорты Dolce & Gabbana',
+            price: 6600,
+            img: 'https://www.dolcegabbana.com/dw/image/v2/BKDB_PRD/on/demandware.static/-/Sites-15/default/dwdbc35347/images/zoom/M4F34TFIM6S_IN3TN_0.jpg?sw=366&sh=504&sm=fit'
+        },
+        {
+            name: 'Женский рюкзак Louis Vuitton',
+            price: 18200,
+            img: 'https://emeli.in.ua/wp-content/uploads/2024/01/414477389_1458894874692010_6991531288097409931_n.jpg'
+        },
+        {
+            name: 'Мужская женская зимняя куртка The North Face х Gucci пуховик оверсайз',
+            price: 36700,
+            img: 'https://images.prom.ua/3972789854_w600_h600_3972789854.jpg'
+        },
+        {
+            name: 'Сумка Gucci',
+            price: 41900,
+            img: 'https://domino.ua/media/iopt/catalog/product/cache/1338d3702d6df92e886ded663f0927b0/1/8/186764-2.webp'
+        },
+        {
+            name: 'Кеды Versace Jeans Couture"',
+            price: 117500,
+            img: 'https://cdn.modoza.com/media/shop/eb/82/4026/9fa9/kedi-versace-jeans-couture-71va3skl-003-eb8240269fa9ace32c1c15d513f7222f.ipthumb853x1105prop.webp'
+        },
+        {
+            name: 'Зимняя куртка Vouis Vuitton',
+            price: 215500,
+            img: 'https://image-thumbs.shafastatic.net/-870911330_310_430'
+        },
+        {
+            name: 'Бежевая кепка Gucci',
+            price: 19500,
+            img: 'https://media2.symbol.ua/aio-images/bd/dc/bddc182ab7dec8db5f9ce4fe32d6b2ad/f95c7d73-0129-414f-b2b2-540f52b7483b.jpg'
+        }
+    ];
+
+    const container = document.getElementById('products-container');
+    const sortSelect = document.getElementById('sort');
+    const cartCountElement = document.getElementById('cart-count');
+    const cartIcon = document.getElementById('cart');
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function updateCartCount() {
+      cartCountElement.textContent = cart.length;
+      cartCountElement.classList.toggle('visible', cart.length > 0);
+    }
+
+    function renderProducts(items) {
+      container.innerHTML = '';
+      items.forEach(product => {
+        const productEl = document.createElement('div');
+        productEl.className = 'product';
+        productEl.innerHTML = `
+          <img src="${product.img}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p>Цена: ${product.price} грн</p>
+          <button>Добавить в корзину</button>
+        `;
+        productEl.querySelector('button').addEventListener('click', () => {
+          cart.push(product);
+          localStorage.setItem('cart', JSON.stringify(cart));
+          updateCartCount();
+        });
+        container.appendChild(productEl);
+      });
+    }
+
+    sortSelect.addEventListener('change', () => {
+      let sorted = [...products];
+      if (sortSelect.value === 'asc') sorted.sort((a, b) => a.price - b.price);
+      else if (sortSelect.value === 'desc') sorted.sort((a, b) => b.price - a.price);
+      renderProducts(sorted);
+    });
+
+    cartIcon.addEventListener('click', () => {
+      window.location.href = 'cart.html';
+    });
+
+    renderProducts(products);
+    updateCartCount();
+  </script>
+</body>
+</html>

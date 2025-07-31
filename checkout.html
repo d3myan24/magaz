@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopVerse - Оформление заказа</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    .checkout-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+
+    form textarea {
+      resize: vertical;
+      height: 100px;
+    }
+
+    .submit-btn {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      background-color: #218838;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #007bff;
+      font-size: 0.9em;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="checkout-container">
+    <h2>Оформление заказа</h2>
+    <form id="order-form">
+      <label for="name">Имя:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="phone">Телефон:</label>
+      <input type="tel" id="phone" name="phone" required />
+
+      <label for="address">Адрес доставки:</label>
+      <textarea id="address" name="address" required></textarea>
+
+      <button type="submit" class="submit-btn">Подтвердить заказ</button>
+    </form>
+
+    <a href="cart.html" class="back-btn">← Вернуться в корзину</a>
+  </div>
+
+  <script>
+    const orderForm = document.getElementById('order-form');
+
+    orderForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      // Здесь можно добавить валидацию и отправку формы на сервер
+      alert('Спасибо за ваш заказ! Мы свяжемся с вами в ближайшее время.');
+
+      // Очистим корзину после оформления
+      localStorage.removeItem('cart');
+
+      // Перенаправим на главную
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>
