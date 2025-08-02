@@ -2,40 +2,61 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ShopVerse - Товары</title>
-  <link rel="stylesheet" href="style.css" />
   <style>
+    /* Ваш существующий CSS */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
+
+    body, html {
+      height: 100%;
       font-family: Arial, sans-serif;
       background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
       background-color: #000000;
       color: white;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
+      padding: 10px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
+      gap: 20px;
+      position: relative;
     }
 
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 20px;
+    .left-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      white-space: nowrap;
     }
 
     .cart-icon {
-      position: relative;
       font-size: 24px;
       cursor: pointer;
+      position: relative;
+      color: white;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      transition: transform 0.3s ease;
+    }
+
+    .cart-icon:hover {
+      transform: scale(1.15);
+    }
+
+    .cart-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
     }
 
     .cart-count {
@@ -48,16 +69,87 @@
       border-radius: 50%;
       padding: 2px 6px;
       display: none;
+      user-select: none;
     }
 
     .cart-count.visible {
       display: inline-block;
     }
 
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      user-select: none;
+    }
+
+    .header-search {
+      max-width: 400px;
+      width: 100%;
+      position: relative;
+      justify-self: center;
+      min-width: 250px;
+    }
+
+    .header-search input {
+      width: 100%;
+      padding: 8px 14px;
+      font-size: 16px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-top: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .suggestions div {
+      padding: 10px;
+      cursor: pointer;
+      color: black;
+    }
+
+    .suggestions div:hover {
+      background-color: #f0f0f0;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      justify-self: end;
+      white-space: nowrap;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      user-select: none;
+      transition: text-decoration 0.3s ease;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
     .container {
       max-width: 1200px;
-      margin: 20px auto;
+      margin: 20px auto 80px;
       padding: 0 20px;
+      flex-grow: 1;
     }
 
     .filter {
@@ -78,11 +170,13 @@
       width: 220px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
+      cursor: pointer;
     }
 
     .product img {
       width: 100%;
       height: auto;
+      border-radius: 5px;
     }
 
     .product h3 {
@@ -109,21 +203,215 @@
     }
 
     footer {
-      background-color: #ecf0f1;
+      background-color: #000000;
+      color: white;
       text-align: center;
       padding: 20px;
-      margin-top: 40px;
+      user-select: none;
+      position: static;
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 100;
+      transition: all 0.3s ease;
     }
+
+    footer.footer-fixed {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 320px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Новое: кнопка сообщения */
+    #message-button {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 56px;
+      height: 56px;
+      background-color: black;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1500;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+    }
+    #message-button:hover {
+      background-color: #222;
+    }
+    #message-button svg {
+      fill: white;
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Всплывающее окно чата */
+    #chat-popup {
+      position: fixed;
+      left: 20px;
+      bottom: 90px;
+      width: 320px;
+      max-width: 90vw;
+      height: 400px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      display: none;
+      flex-direction: column;
+      z-index: 1501;
+      overflow: hidden;
+      user-select: text;
+      font-family: Arial, sans-serif;
+    }
+
+    #chat-header {
+      background: #000;
+      color: white;
+      padding: 12px 16px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #chat-close {
+      cursor: pointer;
+      font-size: 20px;
+      user-select: none;
+      line-height: 1;
+    }
+
+    #chat-messages {
+      flex-grow: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      font-size: 14px;
+      color: #333;
+    }
+
+    #chat-input-container {
+      padding: 8px;
+      border-top: 1px solid #ccc;
+      display: flex;
+      gap: 8px;
+      background: #fff;
+    }
+
+    #chat-input {
+      flex-grow: 1;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    #chat-send {
+      background: #3498db;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+
+    #chat-send:hover {
+      background: #2980b9;
+    }
+
+    /* Сообщения */
+    .chat-message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      max-width: 80%;
+      clear: both;
+      line-height: 1.3;
+    }
+
+    .chat-message.user {
+      background-color: #3498db;
+      color: white;
+      float: right;
+      border-bottom-right-radius: 0;
+    }
+
+    .chat-message.manager {
+      background-color: #e0e0e0;
+      color: #333;
+      float: left;
+      border-bottom-left-radius: 0;
+    }
+
   </style>
 </head>
 <body>
   <header>
-    <div style="display: flex; align-items: center;">
-      <div class="cart-icon" id="cart">🛒
+    <div class="left-header">
+      <div class="cart-icon" id="cart" aria-label="Корзина" role="button" tabindex="0">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm-12-2h14l-1.5-9h-11l-1.5 9zm0-11v2h2l3 7h6v-2h-6l-3-7h-2z"/>
+        </svg>
         <span id="cart-count" class="cart-count">0</span>
       </div>
-      <div class="logo" style="margin-left: 15px;">ShopVerse</div>
+      <div class="logo">ShopVerse</div>
     </div>
+
+    <div class="header-search">
+      <input type="text" id="searchInput" placeholder="Поиск товаров..." autocomplete="off" />
+      <div id="suggestions" class="suggestions"></div>
+    </div>
+
     <nav>
       <a href="index.html">Главная</a>
       <a href="products.html">Товары</a>
@@ -144,79 +432,149 @@
       </select>
     </div>
 
-    <div class="products" id="products-container">
-      <!-- JS вставит товары сюда -->
-    </div>
+    <div class="products" id="products-container"></div>
   </div>
 
   <footer>
     <p>&copy; 2025 ShopVerse. Все права защищены.</p>
   </footer>
 
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" id="closeModal">&times;</span>
+      <img id="modalImage" src="" alt="Товар" />
+      <h3 id="modalTitle"></h3>
+      <p id="modalPrice"></p>
+      <p id="modalDescription"></p>
+    </div>
+  </div>
+
+  <!-- Кнопка сообщений -->
+  <div id="message-button" aria-label="Чат с менеджером" role="button" tabindex="0" title="Чат с менеджером">
+    <!-- Иконка сообщения (конверт) -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+    </svg>
+  </div>
+
+  <!-- Окно чата -->
+  <div id="chat-popup" role="dialog" aria-modal="true" aria-labelledby="chat-header">
+    <div id="chat-header">
+      Чат с менеджером
+      <span id="chat-close" role="button" tabindex="0" aria-label="Закрыть чат">&times;</span>
+    </div>
+    <div id="chat-messages" aria-live="polite" aria-relevant="additions"></div>
+    <div id="chat-input-container">
+      <input type="text" id="chat-input" placeholder="Введите сообщение..." aria-label="Введите сообщение" />
+      <button id="chat-send" aria-label="Отправить сообщение">Отправить</button>
+    </div>
+  </div>
+
   <script>
+    // Ваш существующий JS
     const products = [
       {
         name: 'Футболка Versace',
         price: 11500,
-        img: 'https://images.prom.ua/4770230421_futbolka-cholovicha-versace.jpg'
+        img: 'https://images.prom.ua/4770230421_futbolka-cholovicha-versace.jpg',
+        description: 'Мужская футболка от Versace с фирменным логотипом. Идеальна для повседневного стиля.'
       },
       {
         name: 'Футболка Versace Jeans Couture',
         price: 9070,
-        img: 'https://img.modivo.cloud/product(8/d/e/b/8deb33e25c2c42cb97656486fc0fb6cbf3ad9fdc_01_8052029016625_KM.jpg,webp)/versace-jeans-couture-futbolka-79gah6s0-js515-chornii-regular-fit-0000305601636.webp'
+        img: 'https://img.modivo.cloud/product(8/d/e/b/8deb33e25c2c42cb97656486fc0fb6cbf3ad9fdc_01_8052029016625_KM.jpg,webp)/versace-jeans-couture-futbolka-79gah6s0-js515-chornii-regular-fit-0000305601636.webp',
+        description: 'Стильная футболка из коллекции Versace Jeans Couture. Удобный крой и качественный материал.'
       },
       {
         name: 'Шрты Gucci',
         price: 14500,
-        img: 'https://media2.symbol.ua/aio-images/3f/82/3f8235dcaeb0e6a8395afde61e77b797/2eebc5b9-6a02-4999-b7b6-1b15f4882fee.jpg'
+        img: 'https://media2.symbol.ua/aio-images/3f/82/3f8235dcaeb0e6a8395afde61e77b797/2eebc5b9-6a02-4999-b7b6-1b15f4882fee.jpg',
+        description: 'Летние шорты от Gucci. Лёгкий материал и безупречный стиль.'
       },
-        {
-            name: 'Пляжные шорты Dolce & Gabbana',
-            price: 6600,
-            img: 'https://www.dolcegabbana.com/dw/image/v2/BKDB_PRD/on/demandware.static/-/Sites-15/default/dwdbc35347/images/zoom/M4F34TFIM6S_IN3TN_0.jpg?sw=366&sh=504&sm=fit'
-        },
-        {
-            name: 'Женский рюкзак Louis Vuitton',
-            price: 18200,
-            img: 'https://emeli.in.ua/wp-content/uploads/2024/01/414477389_1458894874692010_6991531288097409931_n.jpg'
-        },
-        {
-            name: 'Мужская женская зимняя куртка The North Face х Gucci пуховик оверсайз',
-            price: 36700,
-            img: 'https://images.prom.ua/3972789854_w600_h600_3972789854.jpg'
-        },
-        {
-            name: 'Сумка Gucci',
-            price: 41900,
-            img: 'https://domino.ua/media/iopt/catalog/product/cache/1338d3702d6df92e886ded663f0927b0/1/8/186764-2.webp'
-        },
-        {
-            name: 'Кеды Versace Jeans Couture"',
-            price: 117500,
-            img: 'https://cdn.modoza.com/media/shop/eb/82/4026/9fa9/kedi-versace-jeans-couture-71va3skl-003-eb8240269fa9ace32c1c15d513f7222f.ipthumb853x1105prop.webp'
-        },
-        {
-            name: 'Зимняя куртка Vouis Vuitton',
-            price: 215500,
-            img: 'https://image-thumbs.shafastatic.net/-870911330_310_430'
-        },
-        {
-            name: 'Бежевая кепка Gucci',
-            price: 19500,
-            img: 'https://media2.symbol.ua/aio-images/bd/dc/bddc182ab7dec8db5f9ce4fe32d6b2ad/f95c7d73-0129-414f-b2b2-540f52b7483b.jpg'
-        }
+      {
+        name: 'Пляжные шорты Dolce & Gabbana',
+        price: 6600,
+        img: 'https://www.dolcegabbana.com/dw/image/v2/BKDB_PRD/on/demandware.static/-/Sites-15/default/dwdbc35347/images/zoom/M4F34TFIM6S_IN3TN_0.jpg?sw=366&sh=504&sm=fit',
+        description: 'Идеальный выбор для отдыха у моря. Яркий стиль Dolce & Gabbana.'
+      },
+      {
+        name: 'Женский рюкзак Louis Vuitton',
+        price: 18200,
+        img: 'https://emeli.in.ua/wp-content/uploads/2024/01/414477389_1458894874692010_6991531288097409931_n.jpg',
+        description: 'Элегантный и вместительный рюкзак от Louis Vuitton для стильных девушек.'
+      },
+      {
+        name: 'Зимняя куртка The North Face x Gucci',
+        price: 36700,
+        img: 'https://images.prom.ua/3972789854_w600_h600_3972789854.jpg',
+        description: 'Пуховик оверсайз от The North Face x Gucci. Максимальное тепло и мода.'
+      },
+      {
+        name: 'Сумка Gucci',
+        price: 41900,
+        img: 'https://domino.ua/media/iopt/catalog/product/cache/1338d3702d6df92e886ded663f0927b0/1/8/186764-2.webp',
+        description: 'Изысканная сумка Gucci с фирменной фурнитурой.'
+      },
+      {
+        name: 'Кеды Versace Jeans Couture',
+        price: 117500,
+        img: 'https://cdn.modoza.com/media/shop/eb/82/4026/9fa9/kedi-versace-jeans-couture-71va3skl-003-eb8240269fa9ace32c1c15d513f7222f.ipthumb853x1105prop.webp',
+        description: 'Элитная обувь от Versace Jeans Couture — стильно и удобно.'
+      },
+      {
+        name: 'Зимняя куртка Vouis Vuitton',
+        price: 215500,
+        img: 'https://image-thumbs.shafastatic.net/-870911330_310_430',
+        description: 'Роскошная зимняя куртка от Vouis Vuitton. Для самых стильных.'
+      },
+      {
+        name: 'Бежевая кепка Gucci',
+        price: 19500,
+        img: 'https://media2.symbol.ua/aio-images/bd/dc/bddc182ab7dec8db5f9ce4fe32d6b2ad/f95c7d73-0129-414f-b2b2-540f52b7483b.jpg',
+        description: 'Классическая кепка от Gucci в бежевом цвете.'
+      }
     ];
 
     const container = document.getElementById('products-container');
     const sortSelect = document.getElementById('sort');
     const cartCountElement = document.getElementById('cart-count');
     const cartIcon = document.getElementById('cart');
+    const footer = document.querySelector('footer');
+
+    const modal = document.getElementById('modal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalPrice = document.getElementById('modalPrice');
+    const modalDescription = document.getElementById('modalDescription');
+    const closeModalBtn = document.getElementById('closeModal');
+
+    const searchInput = document.getElementById('searchInput');
+    const suggestionsBox = document.getElementById('suggestions');
+
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
     function updateCartCount() {
       cartCountElement.textContent = cart.length;
       cartCountElement.classList.toggle('visible', cart.length > 0);
     }
+
+    function openModal(product) {
+      modalImage.src = product.img;
+      modalTitle.textContent = product.name;
+      modalPrice.textContent = `Цена: ${product.price} грн`;
+      modalDescription.textContent = product.description;
+      modal.style.display = 'block';
+    }
+
+    closeModalBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
 
     function renderProducts(items) {
       container.innerHTML = '';
@@ -229,11 +587,18 @@
           <p>Цена: ${product.price} грн</p>
           <button>Добавить в корзину</button>
         `;
-        productEl.querySelector('button').addEventListener('click', () => {
+
+        productEl.querySelector('button').addEventListener('click', (e) => {
+          e.stopPropagation();
           cart.push(product);
           localStorage.setItem('cart', JSON.stringify(cart));
           updateCartCount();
         });
+
+        productEl.addEventListener('click', () => {
+          openModal(product);
+        });
+
         container.appendChild(productEl);
       });
     }
@@ -242,15 +607,126 @@
       let sorted = [...products];
       if (sortSelect.value === 'asc') sorted.sort((a, b) => a.price - b.price);
       else if (sortSelect.value === 'desc') sorted.sort((a, b) => b.price - a.price);
+      else sorted = [...products];
       renderProducts(sorted);
+      footer.classList.remove('footer-fixed');
     });
 
     cartIcon.addEventListener('click', () => {
       window.location.href = 'cart.html';
     });
 
+    function filterSuggestions(query) {
+      if (!query.trim()) {
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+
+      const matches = products.filter(p =>
+        p.name.toLowerCase().includes(query.toLowerCase())
+      );
+
+      suggestionsBox.innerHTML = matches.map(p => `<div>${p.name}</div>`).join('');
+
+      suggestionsBox.querySelectorAll('div').forEach(div => {
+        div.addEventListener('click', () => {
+          const selected = products.find(p => p.name === div.textContent);
+          if (selected) {
+            renderProducts([selected]);
+            suggestionsBox.innerHTML = '';
+            searchInput.value = selected.name;
+            footer.classList.add('footer-fixed');
+          }
+        });
+      });
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim();
+      filterSuggestions(query);
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query === '') {
+          renderProducts(products);
+          suggestionsBox.innerHTML = '';
+          footer.classList.remove('footer-fixed');
+        }
+      }
+    });
+
+    document.addEventListener('click', e => {
+      if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.innerHTML = '';
+      }
+    });
+
     renderProducts(products);
     updateCartCount();
+
+    // --- Новый код для чата ---
+    const messageButton = document.getElementById('message-button');
+    const chatPopup = document.getElementById('chat-popup');
+    const chatClose = document.getElementById('chat-close');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+
+    // Открыть/закрыть чат при клике на кнопку
+    messageButton.addEventListener('click', () => {
+      chatPopup.style.display = (chatPopup.style.display === 'flex') ? 'none' : 'flex';
+      if (chatPopup.style.display === 'flex') {
+        chatInput.focus();
+      }
+    });
+
+    // Закрыть чат по кнопке закрытия
+    chatClose.addEventListener('click', () => {
+      chatPopup.style.display = 'none';
+    });
+
+    // Закрыть чат по клавише Esc
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && chatPopup.style.display === 'flex') {
+        chatPopup.style.display = 'none';
+        messageButton.focus();
+      }
+    });
+
+    // Функция добавления сообщения в чат
+    function addMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.classList.add('chat-message', sender);
+      msgDiv.textContent = text;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Пример автоответа менеджера (можно заменить на реальную логику)
+    function managerReply() {
+      setTimeout(() => {
+        addMessage('Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.', 'manager');
+      }, 1000);
+    }
+
+    // Отправка сообщения
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      chatInput.value = '';
+      managerReply();
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
